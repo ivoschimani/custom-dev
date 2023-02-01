@@ -27,7 +27,12 @@ RUN apk --no-cache --update add \
     chown -R www-data:www-data /var/tmp/nginx && \
     chown -R www-data:www-data /var/tmp/php
 
-RUN apk --no-cache --update add tzdata php81 php81-fpm php81-pdo_mysql php81-json php81-iconv php81-openssl php81-curl php81-ctype php81-zlib php81-xml php81-phar php81-intl php81-session php81-simplexml php81-soap php81-fileinfo php81-dom php81-tokenizer php81-pdo php81-xmlreader php81-xmlwriter php81-mbstring php81-gd php81-pecl-imagick php81-zip php81-bcmath php81-gmp php81-ftp php81-pecl-ssh2 libwebp-dev libzip-dev libjpeg-turbo-dev supervisor curl git openssh-client mysql-client imagemagick-dev libtool imagemagick ghostscript
+RUN apk --no-cache --update add tzdata php81 php81-fpm php81-pdo_mysql php81-json php81-iconv php81-openssl \
+    php81-curl php81-ctype php81-zlib php81-xml php81-phar php81-intl php81-session php81-simplexml php81-soap \
+    php81-fileinfo php81-dom php81-tokenizer php81-pdo php81-xmlreader php81-xmlwriter php81-mbstring php81-gd \
+    php81-pecl-imagick php81-zip php81-bcmath php81-gmp php81-ftp php81-pecl-ssh2 libwebp-dev libzip-dev \
+    libjpeg-turbo-dev supervisor curl git openssh-client mysql-client imagemagick-dev libtool imagemagick \
+    ghostscript
 
 RUN rm -rf /etc/localtime \
     && ln -s /usr/share/zoneinfo/"Europe/Berlin" /etc/localtime \
@@ -54,7 +59,6 @@ COPY start.sh /
 RUN chown -R www-data:www-data /var/www
 
 WORKDIR /var/www
-USER root
 
 # Expose the port nginx is reachable on
 EXPOSE 8080
