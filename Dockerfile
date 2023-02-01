@@ -55,6 +55,7 @@ COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Copy Entrypoint
 COPY start.sh /
+RUN chmod +x /start.sh
 
 RUN chown -R www-data:www-data /var/www
 
