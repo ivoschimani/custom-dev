@@ -1,4 +1,4 @@
-FROM alpine:3.17
+FROM alpine:3.18
 
 LABEL org.opencontainers.image.authors="ivo@schimani.de"
 
@@ -27,10 +27,10 @@ RUN apk --no-cache --update add \
     chown -R www-data:www-data /var/tmp/nginx && \
     chown -R www-data:www-data /var/tmp/php
 
-RUN apk --no-cache --update add tzdata php81 php81-fpm php81-pdo_mysql php81-json php81-iconv php81-openssl \
-    php81-curl php81-ctype php81-zlib php81-xml php81-phar php81-intl php81-session php81-simplexml php81-soap \
-    php81-fileinfo php81-dom php81-tokenizer php81-pdo php81-xmlreader php81-xmlwriter php81-mbstring php81-gd \
-    php81-pecl-imagick php81-zip php81-bcmath php81-gmp php81-ftp php81-pecl-ssh2 libwebp-dev libzip-dev \
+RUN apk --no-cache --update add tzdata php82 php82-fpm php82-pdo_mysql php82-json php82-iconv php82-openssl \
+    php82-curl php82-ctype php82-zlib php82-xml php82-phar php82-intl php82-session php82-simplexml php82-soap \
+    php82-fileinfo php82-dom php82-tokenizer php82-pdo php82-xmlreader php82-xmlwriter php82-mbstring php82-gd \
+    php82-pecl-imagick php82-zip php82-bcmath php82-gmp php82-ftp php82-pecl-ssh2 libwebp-dev libzip-dev \
     libjpeg-turbo-dev supervisor curl git openssh-client mysql-client imagemagick-dev libtool imagemagick \
     ghostscript
 
@@ -47,8 +47,8 @@ RUN set -ex \
   && chmod +x /usr/local/bin/composer
 
 # Configure PHP-FPM
-COPY config/fpm-pool.conf /etc/php81/php-fpm.d/www.conf
-COPY config/php.ini /etc/php81/conf.d/zzz_custom.ini
+COPY config/fpm-pool.conf /etc/php82/php-fpm.d/www.conf
+COPY config/php.ini /etc/php82/conf.d/zzz_custom.ini
 
 # Configure supervisord
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
