@@ -32,7 +32,7 @@ RUN apk --no-cache --update add tzdata php82 php82-fpm php82-pdo_mysql php82-jso
     php82-fileinfo php82-dom php82-tokenizer php82-pdo php82-xmlreader php82-xmlwriter php82-mbstring php82-gd \
     php82-pecl-imagick php82-zip php82-bcmath php82-gmp php82-ftp php82-pecl-ssh2 libwebp-dev libzip-dev \
     libjpeg-turbo-dev supervisor curl git openssh-client mysql-client imagemagick-dev libtool imagemagick \
-    ghostscript
+    ghostscript && ln -s /usr/bin/php82 /usr/bin/php
 
 RUN rm -rf /etc/localtime \
     && ln -s /usr/share/zoneinfo/"Europe/Berlin" /etc/localtime \
