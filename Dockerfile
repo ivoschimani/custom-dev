@@ -1,4 +1,4 @@
-FROM alpine:3.21
+FROM alpine:3.23
 
 LABEL org.opencontainers.image.authors="ivo@schimani.de"
 
@@ -27,12 +27,12 @@ RUN apk --no-cache --update add \
     chown -R www-data:www-data /var/tmp/nginx && \
     chown -R www-data:www-data /var/tmp/php
 
-RUN apk --no-cache --update add tzdata php82 php82-fpm php82-pdo_mysql php82-mysqli php82-json php82-iconv php82-openssl \
-    php82-curl php82-ctype php82-zlib php82-xml php82-phar php82-intl php82-session php82-simplexml php82-soap \
-    php82-fileinfo php82-dom php82-tokenizer php82-pdo php82-xmlreader php82-xmlwriter php82-mbstring php82-gd \
-    php82-pecl-imagick php82-pecl-mongodb php82-zip php82-bcmath php82-gmp php82-ftp php82-pecl-ssh2 php82-sodium libwebp-dev libzip-dev \
+RUN apk --no-cache --update add tzdata php83 php83-fpm php83-pdo_mysql php83-mysqli php83-json php83-iconv php83-openssl \
+    php83-curl php83-ctype php83-zlib php83-xml php83-phar php83-intl php83-session php83-simplexml php83-soap \
+    php83-fileinfo php83-dom php83-tokenizer php83-pdo php83-xmlreader php83-xmlwriter php83-mbstring php83-gd \
+    php83-pecl-imagick php83-pecl-mongodb php83-zip php83-bcmath php83-gmp php83-ftp php83-pecl-ssh2 php83-sodium libwebp-dev libzip-dev \
     libjpeg-turbo-dev supervisor curl git openssh-client mysql-client imagemagick-dev libtool imagemagick \
-    ghostscript && ln -s /usr/bin/php82 /usr/bin/php
+    ghostscript && ln -s /usr/bin/php83 /usr/bin/php
 
 RUN rm -rf /etc/localtime \
     && ln -s /usr/share/zoneinfo/"Europe/Berlin" /etc/localtime \
@@ -42,13 +42,13 @@ RUN rm -rf /var/cache/apk/*
 
 RUN set -ex \
   && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-  && php composer-setup.php --2.2 --install-dir=/usr/local/bin --filename=composer \
+  && php composer-setup.php --2.9 --install-dir=/usr/local/bin --filename=composer \
   && php -r "unlink('composer-setup.php');" \
   && chmod +x /usr/local/bin/composer
 
 # Configure PHP-FPM
-COPY config/fpm-pool.conf /etc/php82/php-fpm.d/www.conf
-COPY config/php.ini /etc/php82/conf.d/zzz_custom.ini
+COPY config/fpm-pool.conf /etc/php83/php-fpm.d/www.conf
+COPY config/php.ini /etc/php83/conf.d/zzz_custom.ini
 
 # Configure supervisord
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
