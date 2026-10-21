@@ -1,15 +1,19 @@
-FROM alpine:3.23
+FROM php:8.3-fpm-alpine3.23
 
 LABEL org.opencontainers.image.authors="ivo@schimani.de"
 
 ARG LOCAL_USER_ID=1000
 ARG LOCAL_GROUP_ID=1000
 
+COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
+
 RUN apk update \
   && apk upgrade
 
-# Create user
-RUN mkdir -p /var/www && \
+# Recreate user (the php base image ships www-data with uid 82)
+RUN deluser www-data 2>/dev/null; \
+    addgroup -S -g 82 www-data 2>/dev/null; \
+    mkdir -p /var/www && \
     adduser -D --home /var/www -u $LOCAL_USER_ID -g $LOCAL_GROUP_ID -s /bin/sh www-data -G www-data && \
     chown -R www-data:www-data /var/www
 
@@ -27,12 +31,9 @@ RUN apk --no-cache --update add \
     chown -R www-data:www-data /var/tmp/nginx && \
     chown -R www-data:www-data /var/tmp/php
 
-RUN apk --no-cache --update add tzdata php83 php83-fpm php83-pdo_mysql php83-mysqli php83-json php83-iconv php83-openssl \
-    php83-curl php83-ctype php83-zlib php83-xml php83-phar php83-intl php83-session php83-simplexml php83-soap \
-    php83-fileinfo php83-dom php83-tokenizer php83-pdo php83-xmlreader php83-xmlwriter php83-mbstring php83-gd \
-    php83-pecl-imagick php83-pecl-mongodb php83-zip php83-bcmath php83-gmp php83-ftp php83-pecl-ssh2 php83-sodium libwebp-dev libzip-dev \
-    libjpeg-turbo-dev supervisor curl git openssh-client mysql-client imagemagick-dev libtool imagemagick \
-    ghostscript && ln -s /usr/bin/php83 /usr/bin/php
+RUN install-php-extensions pdo_mysql mysqli intl soap gd imagick mongodb zip bcmath gmp ftp ssh2
+
+RUN apk --no-cache --update add tzdata supervisor curl git openssh-client mysql-client imagemagick ghostscript
 
 RUN rm -rf /etc/localtime \
     && ln -s /usr/share/zoneinfo/"Europe/Berlin" /etc/localtime \
@@ -46,9 +47,10 @@ RUN set -ex \
   && php -r "unlink('composer-setup.php');" \
   && chmod +x /usr/local/bin/composer
 
-# Configure PHP-FPM
-COPY config/fpm-pool.conf /etc/php83/php-fpm.d/www.conf
-COPY config/php.ini /etc/php83/conf.d/zzz_custom.ini
+# Configure PHP-FPM (replace the base image pool files, zz-docker.conf would override listen)
+RUN rm -f /usr/local/etc/php-fpm.d/*.conf
+COPY config/fpm-pool.conf /usr/local/etc/php-fpm.d/www.conf
+COPY config/php.ini /usr/local/etc/php/conf.d/zzz_custom.ini
 
 # Configure supervisord
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
